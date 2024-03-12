@@ -1,0 +1,41 @@
+version: '3'
+services:
+  backend:
+    image: ecommerce-backend
+    ports:
+      - "3000:3000"
+
+  frontend:
+    image: ecommerce-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  database:
+    image: mongo
+    volumes:
+      - ./data:/data/db
+
+  cadvisor:
+    image: google/cadvisor
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - ./rules:/etc/prometheus/rules
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"

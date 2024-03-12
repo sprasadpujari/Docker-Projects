@@ -1,0 +1,11 @@
+groups:
+  - name: app-rules
+    rules:
+      - alert: HighCPUUsage
+        expr: sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~"backend|frontend"}[5m])) / sum(machine_cpu_cores) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.container_label_com_docker_compose_service }} service"
+          description: "The CPU usage on {{ $labels.container_label_com_docker_compose_service }} service is above 80% for more than 5 minutes."
